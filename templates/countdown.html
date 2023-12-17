@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Christmas Countdown</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <h1>{{ custom_name }}</h1>
     <p>Days until Christmas: {{ days }}</p>
+    <img src="{{ url_for('static', filename='images/christmas.png') }}" alt="Christmas">
 </body>
 </html>
