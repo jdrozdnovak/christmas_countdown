@@ -8,6 +8,9 @@ on:
     branches:
       - main
 
+env:
+  env_var: ${{ vars.ENV_CONTEXT_VAR }}
+
 jobs:
   build:
     runs-on: ubuntu-latest

@@ -2,12 +2,94 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Christmas Countdown</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Xmas Snow</title>
+    <style>
+        * { margin: 0; padding: 0; }
+        body {
+            background: url('{{ url_for('static', filename='images/bg.jpg') }}');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+        }
+        #greeting {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-size: 24px;
+            text-shadow: 2px 2px 4px #000000;
+        }
+    </style>
 </head>
 <body>
-    <h1>{{ custom_name }}</h1>
-    <p>Days until Christmas: {{ days }}</p>
-    <img src="{{ url_for('static', filename='images/christmas.png') }}" alt="Christmas">
+
+<canvas id="snowField"></canvas>
+<div id="greeting">
+    {{ custom_name }}<br>
+    Days until Christmas: {{ days_until_christmas }}
+</div>
+
+<script>
+var canvas = document.querySelector('#snowField');
+var ctx = canvas.getContext('2d');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+var totalSnow = 100;
+
+function Snow() {
+    this.x = Math.round(Math.random() * canvas.width);
+    this.y = Math.round(Math.random() * canvas.height);
+    this.r = Math.random() * 4 + 1;
+    this.d = Math.random() * totalSnow;
+    this.a = Math.random() * 5;
+}
+
+Snow.prototype.update = function () {
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, false);
+    ctx.fill();
+    ctx.closePath();
+
+    this.x += Math.sin(this.a) / 4;
+    this.y += Math.random() * 1 + 1;
+    if(this.x > canvas.width || this.x < 0) {
+        this.x = Math.random() * canvas.width;
+    }
+    if(this.y > canvas.height) {
+        this.y = 0;
+    }
+    this.a += 0.01;
+};
+
+var snows = [];
+var imgTree = new Image();
+imgTree.src = '{{ url_for('static', filename='images/tree.png') }}';
+var imgLight = new Image();
+imgLight.src = '{{ url_for('static', filename='images/light.png') }}';
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(imgTree, 0, canvas.height - imgTree.height / 4 + 50, 500, 550);
+    ctx.drawImage(imgLight, canvas.width - imgLight.width/3, 0, imgLight.width/4, imgLight.height/4);
+
+    for(var i = 0; i < snows.length; i++) {
+        snows[i].update();
+    }
+
+    requestAnimationFrame(draw);
+}
+
+window.onload = function () {
+    for(var i = 0; i < totalSnow; ++i) {
+        var _snow = new Snow();
+        snows.push(_snow);
+    }
+    draw();
+};
+</script>
+
 </body>
 </html>
